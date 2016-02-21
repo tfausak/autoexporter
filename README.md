@@ -74,8 +74,8 @@ That will generate code like the first example. A couple caveats:
         this as well.
 
 [Autoexporter]: https://github.com/tfausak/autoexporter
-[Version badge]: https://www.stackage.org/package/autoexporter/badge/nightly?label=version
-[version]: https://www.stackage.org/package/autoexporter
+[Version badge]: https://img.shields.io/hackage/v/autoexporter.svg?label=version
+[version]: https://hackage.haskell.org/package/autoexporter
 [Build badge]: https://travis-ci.org/tfausak/autoexporter.svg?branch=master
 [build]: https://travis-ci.org/tfausak/autoexporter
 [Stack]: http://haskellstack.org
