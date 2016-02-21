@@ -12,7 +12,7 @@ main = do
         [name, inputFile, outputFile] -> do
             input <- readFile inputFile
             case input of
-                "{-# OPTIONS_GHC -F -pgmF nafta #-}\n" -> do
+                "{-# OPTIONS_GHC -F -pgmF autoexporter #-}\n" -> do
                     let moduleName = makeModuleName name
 
                     let directory = FilePath.dropExtension inputFile
