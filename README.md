@@ -61,9 +61,6 @@ That will generate code like the first example. A couple caveats:
         path into a module name. For example, how can we reliably convert
         `/home/taylor/HSPackage/Data/Package.hs` into `Data.Package`?
 
--   Absolutely nothing else can be in the source file. Autoexporter will blow
-    up if it finds anything else.
-
 -   Only immediate children will be re-exported. If you use this in some module
     `M`, it won't pull in `M.A.B`.
 
