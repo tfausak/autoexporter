@@ -9,29 +9,25 @@ main :: IO ()
 main = do
     args <- Environment.getArgs
     case args of
-        [name, inputFile, outputFile] -> do
-            input <- readFile inputFile
-            case input of
-                "{-# OPTIONS_GHC -F -pgmF autoexporter #-}\n" -> do
-                    let moduleName = makeModuleName name
+        [name, _inputFile, outputFile] -> do
+            let moduleName = makeModuleName name
 
-                    let directory = FilePath.dropExtension inputFile
-                    files <- Directory.getDirectoryContents directory
-                    let haskellFiles = filter (\ f -> List.isSuffixOf ".hs" f || List.isSuffixOf ".lhs" f) files
-                    let paths = map (directory FilePath.</>) haskellFiles
-                    let modules = List.sort (map makeModuleName paths)
-                    let exports = init (unlines (map (\ x -> "    module " ++ x ++ ",") modules))
-                    let imports = init (unlines (map ("import " ++) modules))
+            let directory = FilePath.dropExtension inputFile
+            files <- Directory.getDirectoryContents directory
+            let haskellFiles = filter (\ f -> List.isSuffixOf ".hs" f || List.isSuffixOf ".lhs" f) files
+            let paths = map (directory FilePath.</>) haskellFiles
+            let modules = List.sort (map makeModuleName paths)
+            let exports = init (unlines (map (\ x -> "    module " ++ x ++ ",") modules))
+            let imports = init (unlines (map ("import " ++) modules))
 
-                    let output = unlines
-                            [ unwords ["module", moduleName, "("]
-                            , exports
-                            , ") where"
-                            , ""
-                            , imports
-                            ]
-                    writeFile outputFile output
-                _ -> error ("unexpected input: " ++ show input)
+            let output = unlines
+                    [ unwords ["module", moduleName, "("]
+                    , exports
+                    , ") where"
+                    , ""
+                    , imports
+                    ]
+            writeFile outputFile output
         _ -> error ("unexpected arguments: " ++ show args)
   where
     makeModuleName :: FilePath -> String
