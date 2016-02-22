@@ -9,7 +9,7 @@ main :: IO ()
 main = do
     args <- Environment.getArgs
     case args of
-        [name, _inputFile, outputFile] -> do
+        [name, inputFile, outputFile] -> do
             let moduleName = makeModuleName name
 
             let directory = FilePath.dropExtension inputFile
