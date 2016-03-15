@@ -1,0 +1,29 @@
+category: Utility
+description: Autoexporter automatically re-exports modules.
+executables:
+  autoexporter:
+    dependencies:
+    - base
+    - autoexporter
+    main: Main.hs
+    source-dirs: executable
+extra-source-files:
+- CHANGELOG.md
+- LICENSE.md
+- package.yaml
+- README.md
+- stack.yaml
+ghc-options:
+- -Wall
+github: tfausak/autoexporter
+library:
+  dependencies:
+  - base >=4.7 && <4.9
+  - directory >=1.2 && <1.3
+  - filepath >=1.3 && <1.5
+  source-dirs: library
+license: MIT
+maintainer: Taylor Fausak
+name: autoexporter
+synopsis: Automatically re-export modules.
+version: '0.1.2'
