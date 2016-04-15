@@ -1,4 +1,4 @@
-module Autoexporter where
+module Autoexporter (main) where
 
 import qualified Data.List as List
 import qualified Data.Maybe as Maybe
@@ -32,10 +32,10 @@ main = do
                     ]
             writeFile outputFile output
         _ -> error ("unexpected arguments: " ++ show args)
-  where
-    makeModuleName :: FilePath -> String
-    makeModuleName name =
-        let path = FilePath.dropExtension name
-            parts = FilePath.splitDirectories path
-            rest = reverse (takeWhile (\ x -> Maybe.isJust (Text.simpleParse x :: Maybe ModuleName.ModuleName)) (reverse parts))
-        in  List.intercalate "." rest
+
+makeModuleName :: FilePath -> String
+makeModuleName name =
+    let path = FilePath.dropExtension name
+        parts = FilePath.splitDirectories path
+        rest = reverse (takeWhile (\ x -> Maybe.isJust (Text.simpleParse x :: Maybe ModuleName.ModuleName)) (reverse parts))
+    in  List.intercalate "." rest
