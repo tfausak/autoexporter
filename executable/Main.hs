@@ -1,4 +1,3 @@
-import qualified Autoexporter
+module Main (module Autoexporter) where
 
-main :: IO ()
-main = Autoexporter.main
+import Autoexporter (main)
