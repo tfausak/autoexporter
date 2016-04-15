@@ -1,6 +1,9 @@
 module Autoexporter where
 
 import qualified Data.List as List
+import qualified Data.Maybe as Maybe
+import qualified Distribution.ModuleName as ModuleName
+import qualified Distribution.Text as Text
 import qualified System.Directory as Directory
 import qualified System.Environment as Environment
 import qualified System.FilePath as FilePath
@@ -34,6 +37,5 @@ main = do
     makeModuleName name =
         let path = FilePath.dropExtension name
             parts = FilePath.splitDirectories path
-            -- TODO: Figure out a better way to get the actual module name.
-            rest = tail (dropWhile (/= "library") parts)
+            rest = reverse (takeWhile (\ x -> Maybe.isJust (Text.simpleParse x :: Maybe ModuleName.ModuleName)) (reverse parts))
         in  List.intercalate "." rest
