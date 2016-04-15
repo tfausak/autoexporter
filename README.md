@@ -53,14 +53,6 @@ simply drop this into the `M` module:
 
 That will generate code like the first example. A couple caveats:
 
--   Your source files must be rooted in a directory called `library`.
-
-    -   I will happily accept patches that lift this restriction. This is good
-        enough for my purposes now, but it's pretty bad in general. The hard
-        part of this problem is knowing when to stop when converting a file
-        path into a module name. For example, how can we reliably convert
-        `/home/taylor/HSPackage/Data/Package.hs` into `Data.Package`?
-
 -   Only immediate children will be re-exported. If you use this in some module
     `M`, it won't pull in `M.A.B`.
 
