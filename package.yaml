@@ -27,4 +27,4 @@ license: MIT
 maintainer: Taylor Fausak
 name: autoexporter
 synopsis: Automatically re-export modules.
-version: '0.2.1'
+version: '0.2.2'
