@@ -1,29 +1,18 @@
 # [Autoexporter][]
 
-Autoexporter automatically re-exports Haskell modules.
-
 [![Version badge][]][version]
 [![Build badge][]][build]
 
--   [Install](#install)
--   [Use](#use)
-
-## Install
-
-1.  Install [Stack][].
-
-2.  `stack install autoexporter`
-
-## Use
+Autoexporter automatically re-exports Haskell modules.
 
 Let's say you have a module `M` that just exports some other modules. It might
 look like this:
 
 ``` haskell
 module M
-    ( module M.A
-    , module M.B
-    ) where
+  ( module M.A
+  , module M.B
+  ) where
 
 import M.A
 import M.B
@@ -51,20 +40,27 @@ simply drop this into the `M` module:
 {-# OPTIONS_GHC -F -pgmF autoexporter #-}
 ```
 
-That will generate code like the first example. A couple caveats:
+That will generate code that looks like this:
 
--   Only immediate children will be re-exported. If you use this in some module
-    `M`, it won't pull in `M.A.B`.
+``` haskell
+module M (
+  module M.A,
+  module M.B,
+) where
+import M.A
+import M.B
+```
 
--   You cannot selectively leave out any modules. You also cannot selectively
-    exclude any imports from any of the modules.
+Autoexporter will generally behave as you'd expect, but there are a couple
+things to look out for:
 
-    -   This could be allowed via `-optF`. I will happily accept patches for
-        this as well.
+- Only immediate children will be re-exported. If you use this in some module
+  `M`, it won't pull in `M.A.B`.
+
+- You cannot selectively include or exclude any modules.
 
 [Autoexporter]: https://github.com/tfausak/autoexporter
 [Version badge]: https://www.stackage.org/package/autoexporter/badge/nightly?label=version
-[version]: https://www.stackage.org/package/autoexporter
+[version]: https://www.stackage.org/nightly/package/autoexporter
 [Build badge]: https://travis-ci.org/tfausak/autoexporter.svg?branch=master
 [build]: https://travis-ci.org/tfausak/autoexporter
-[Stack]: http://haskellstack.org
