@@ -27,4 +27,4 @@ license-file: LICENSE.markdown
 maintainer: Taylor Fausak
 name: autoexporter
 synopsis: Automatically re-export modules.
-version: '0.2.3'
+version: '1.0.0'
