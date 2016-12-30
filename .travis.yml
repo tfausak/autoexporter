@@ -3,20 +3,16 @@ addons:
     packages:
     - libgmp-dev
 after_success:
-- ! 'test $TRAVIS_TAG && mkdir -p ~/.stack/upload && echo "{ \"username\": \"$HACKAGE_USERNAME\"
-  , \"password\": \"$HACKAGE_PASSWORD\" }" > ~/.stack/upload/credentials.json && stack
-  upload .'
+- stack tools/upload-package.hs
 before_install:
-- mkdir -p $HOME/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards
-  --strip-components=1 -C ~/.local/bin '*/stack'
-- stack setup
+- sh tools/install-stack.sh
 cache:
   directories:
+  - $HOME/.local/bin
   - $HOME/.stack
 language: c
 script:
-- stack --no-terminal build --haddock --pedantic
+- stack setup
+- stack build --pedantic
 - stack sdist
 sudo: false
