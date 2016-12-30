@@ -1,4 +1,4 @@
-{- stack --resolver nightly runghc
+{- stack runghc
   --package bytestring
   --package github-release
   --package process
