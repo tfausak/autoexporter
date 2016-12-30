@@ -1,3 +1,5 @@
-module Main (module Autoexporter) where
+module Main
+  ( module Autoexporter
+  ) where
 
 import Autoexporter (main)
