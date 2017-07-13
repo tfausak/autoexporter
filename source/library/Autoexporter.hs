@@ -2,11 +2,15 @@ module Autoexporter where
 
 import qualified Data.List as List
 import qualified Data.Maybe as Maybe
+import qualified Data.Traversable as Traversable
 import qualified Distribution.ModuleName as ModuleName
 import qualified Distribution.Text as Text
 import qualified System.Directory as Directory
 import qualified System.Environment as Environment
 import qualified System.FilePath as FilePath
+
+data ExportScope = ExportScope'Shallow
+                 | ExportScope'Deep
 
 main :: IO ()
 main = do
@@ -16,16 +20,34 @@ main = do
 mainWithArgs :: [String] -> IO ()
 mainWithArgs args =
   case args of
-    [name, inputFile, outputFile] -> autoexport name inputFile outputFile
+    [name, inputFile, outputFile, "--deep"] ->
+      autoexport ExportScope'Deep name inputFile outputFile
+    [name, inputFile, outputFile] ->
+      autoexport ExportScope'Shallow name inputFile outputFile
     _ -> fail ("unexpected arguments: " ++ show args)
 
-autoexport :: String -> FilePath -> FilePath -> IO ()
-autoexport name inputFile outputFile = do
+autoexport :: ExportScope -> String -> FilePath -> FilePath -> IO ()
+autoexport exportScope name inputFile outputFile = do
   let moduleName = makeModuleName name
   let directory = FilePath.dropExtension inputFile
-  files <- Directory.getDirectoryContents directory
+  files <- findFiles exportScope directory
   let output = makeOutput moduleName directory files
   writeFile outputFile output
+
+findFiles :: ExportScope -> FilePath -> IO [FilePath]
+findFiles ExportScope'Shallow dir = filter isHaskellFile <$> findRootFiles dir
+findFiles ExportScope'Deep dir = do
+  rootItems <- findRootFiles dir
+  childItems <- Traversable.for rootItems $ \item -> do
+    let path = dir FilePath.</> item
+    dirExists <- Directory.doesDirectoryExist path
+    if dirExists
+      then fmap (item FilePath.</>) <$> findFiles ExportScope'Deep path
+      else pure []
+  pure $ mconcat (filter isHaskellFile rootItems : childItems)
+
+findRootFiles :: FilePath -> IO [FilePath]
+findRootFiles dir = filter isRootItem <$> Directory.getDirectoryContents dir
 
 makeModuleName :: FilePath -> String
 makeModuleName name =
@@ -52,6 +74,9 @@ makeOutput moduleName directory files =
 
 isHaskellFile :: FilePath -> Bool
 isHaskellFile x = List.isSuffixOf ".hs" x || List.isSuffixOf ".lhs" x
+
+isRootItem :: FilePath -> Bool
+isRootItem x = x `notElem` [".", ".."]
 
 renderModule :: String -> [String] -> String
 renderModule name modules =
