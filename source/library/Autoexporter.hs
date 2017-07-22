@@ -2,11 +2,15 @@ module Autoexporter where
 
 import qualified Data.List as List
 import qualified Data.Maybe as Maybe
+import qualified Data.Traversable as Traversable
 import qualified Distribution.ModuleName as ModuleName
 import qualified Distribution.Text as Text
 import qualified System.Directory as Directory
 import qualified System.Environment as Environment
 import qualified System.FilePath as FilePath
+
+data ExportScope = ExportScopeShallow
+                 | ExportScopeDeep
 
 main :: IO ()
 main = do
@@ -16,16 +20,38 @@ main = do
 mainWithArgs :: [String] -> IO ()
 mainWithArgs args =
   case args of
-    [name, inputFile, outputFile] -> autoexport name inputFile outputFile
+    [name, inputFile, outputFile, "--deep"] ->
+      autoexport ExportScopeDeep name inputFile outputFile
+    [name, inputFile, outputFile] ->
+      autoexport ExportScopeShallow name inputFile outputFile
     _ -> fail ("unexpected arguments: " ++ show args)
 
-autoexport :: String -> FilePath -> FilePath -> IO ()
-autoexport name inputFile outputFile = do
+autoexport :: ExportScope -> String -> FilePath -> FilePath -> IO ()
+autoexport exportScope name inputFile outputFile = do
   let moduleName = makeModuleName name
   let directory = FilePath.dropExtension inputFile
-  files <- Directory.getDirectoryContents directory
+  files <- findFiles exportScope directory
   let output = makeOutput moduleName directory files
   writeFile outputFile output
+
+findFiles :: ExportScope -> FilePath -> IO [FilePath]
+findFiles exportScope dir =
+  case exportScope of
+    ExportScopeShallow ->
+      fmap (filter isHaskellFile) (Directory.listDirectory dir)
+    ExportScopeDeep ->
+      findFilesDeep dir
+
+findFilesDeep :: FilePath -> IO [FilePath]
+findFilesDeep dir = do
+  rootItems <- Directory.listDirectory dir
+  childItems <- Traversable.for rootItems $ \item -> do
+    let path = dir FilePath.</> item
+    dirExists <- Directory.doesDirectoryExist path
+    if dirExists
+      then fmap (fmap (item FilePath.</>)) (findFilesDeep path)
+      else pure []
+  pure $ mconcat (filter isHaskellFile rootItems : childItems)
 
 makeModuleName :: FilePath -> String
 makeModuleName name =
