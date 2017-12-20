@@ -1,3 +1,10 @@
+-- | This package isn't really meant to be used as a library. It's typically
+-- used as a GHC preprocessor, like so:
+--
+-- > {-# OPTIONS_GHC -F -pgmF autoexporter #-}
+--
+-- For more information, please see the README on GitHub:
+-- <https://github.com/tfausak/autoexporter#readme>.
 module Autoexporter where
 
 import qualified Data.List as List
