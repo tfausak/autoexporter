@@ -5,7 +5,23 @@
 --
 -- For more information, please see the README on GitHub:
 -- <https://github.com/tfausak/autoexporter#readme>.
-module Autoexporter where
+module Autoexporter
+  ( defaultMain
+  , mainWithArgs
+  , autoexport
+  , findFiles
+  , findFilesDeep
+  , makeModuleName
+  , takeWhileEnd
+  , isModuleName
+  , parseModuleName
+  , makeOutput
+  , isHaskellFile
+  , renderModule
+  , unlines'
+  , renderExport
+  , renderImport
+  ) where
 
 import qualified Data.List as List
 import qualified Data.Maybe as Maybe
@@ -19,8 +35,8 @@ import qualified System.FilePath as FilePath
 data ExportScope = ExportScopeShallow
                  | ExportScopeDeep
 
-main :: IO ()
-main = do
+defaultMain :: IO ()
+defaultMain = do
   args <- Environment.getArgs
   mainWithArgs args
 

@@ -1,18 +1,30 @@
+sudo: false
+language: generic
 addons:
   apt:
     packages:
-    - libgmp-dev
-after_success:
-- stack tools/upload-package.hs
-before_install:
-- sh tools/install-stack.sh
+      - libgmp-dev
 cache:
   directories:
-  - $HOME/.local/bin
-  - $HOME/.stack
-language: c
+    - $HOME/.local/bin
+    - $HOME/.stack
+before_install:
+  - | # Install Stack.
+    if test ! -f "$HOME/.local/bin/stack"
+    then
+      VERSION=1.6.5
+      URL="https://github.com/commercialhaskell/stack/releases/download/v$VERSION/stack-$VERSION-$TRAVIS_OS_NAME-x86_64.tar.gz"
+      cd /tmp
+      curl --location "$URL" > stack.tar.gz
+      gunzip stack.tar.gz
+      tar --extract --file stack.tar --strip-components 1
+      mkdir --parents "$HOME/.local/bin"
+      mv stack "$HOME/.local/bin"
+    fi
+  - stack --version
+install:
+  - stack setup
+  - stack build --only-dependencies --test
 script:
-- stack setup
-- stack build --pedantic
-- stack sdist
-sudo: false
+  - stack build --pedantic --test
+  - stack sdist
