@@ -20,6 +20,7 @@ before_install:
       tar --extract --file stack.tar --strip-components 1
       mkdir --parents "$HOME/.local/bin"
       mv stack "$HOME/.local/bin"
+      cd -
     fi
   - stack --version
 install:
@@ -27,4 +28,22 @@ install:
   - stack build --only-dependencies --test
 script:
   - stack build --pedantic --test
+  - rm -f -v "$(stack path --dist-dir)/autoexporter-*.tar.gz"
   - stack sdist
+after_success:
+  - mkdir -p deploy
+  - cp "$(stack path --dist-dir)/autoexporter-*.tar.gz" deploy/autoexporter.tgz
+  - cp "$(stack exec which autoexporter)" deploy/autoexporter
+deploy:
+  - skip_cleanup: true
+    on: { tags: true }
+    provider: releases
+    api_key: { secure: GWl3PAtImTO93o1HjaYn5AwaB9ec3k9f5Qxpn20VAE/jNEjGuDphOfhUo7mK5jCfL6w2bPXkpFM1bAbdy4j4GsvwD5JCJtXGONiLNHPfwG49y4BF1nl+w7zJbJIZEJHbxIXgWLYhoqDW03VavU48YnVCugYTtezOqfTBxP0TWZOARlumaA2vHeTXc1sJS8dRSxpGJ03QR4q/Giw+PtC9SNVNIW0+cVT1v5lITDhd4de9Sgu9AHbBrRXCb/P4YCQJ3hX5JWRE5KaeGgpPYlGAYlCM+3CxgjJ1HsjJKQQzzlHEkZ/v1/D3S0ewm6G8ZRkz9pW9glYmxAfA7RqaxQVP/2Z3cyxiVMiMvRxzP8fChoBF+2v/VEzhofJj+IHvqNyMbc0FkfVAadh5hrgY/4AdLN53crH90qdXMy5K+vtngLf61CY4oKUcdE9sBObrtCxXRU8BaHeuUfhk+bkfkCcv9exa4JA1DLxngXNpqNBnGkYEfq914nbZgu0BCVDw3a94zzv6/fvUMaQANIabxFDkec1PjlnE5+F4z5LhABX5YMpGxlz1AHpf5lnWPtPVl8sjBbywombsSqwx/KIrzitPr1DOqd5GbdLy25lYicS3nQPdh6d8P/1AbY9H6Gd7LYjT6yy76jeXWE2KOgCwqodd0/xwftbYz4PsBh8ap6srhOs= }
+    file:
+      - deploy/autoexporter.tgz
+      - deploy/autoexporter
+  - skip_cleanup: true
+    on: { tags: true }
+    provider: hackage
+    username: fozworth
+    password: { secure: HopvsYqmRd7wQHpVAP9PPGmbh4l4rXhxbO2rthXGanLTwtNA25k1F75gbL7AnlmmGiCi4y/HSQKgz56Anv/F8VEDklNuF7WzKtA40lZqaOljcUs1T0Pr3Qvkm6kFlahnWwUmJaoTJaDVs75FVSkkuBw8CPvvfZwVfSJa4CtOniLTkSR6xr738XqyRc9Cj3Tj8szkTzF2inWm1lWtXsLGskmgQvKiUZefgoNOVdSv4dG8tgSmbW2Y1nUmvIexBf8Zp8CVwTinxv3wpX1TgIccvhDR+H/BCwr+OZVxFvp5AzymmTX/WYCE+kcJvF+WhmUI/hsBk7R0GLLj9kRkSPMF1MDEtRp+KHH/mKc963zJiaWwLX35wXywc9DMmvVem4w60YthWtPbx57XrrbNNkZDRFMl9hAK5gHgqSwK6A1m8Pqsi2usYXes+Suh9B0H2ysAqWfmIgOSXX9O9oXIT+/Ig8pDECKYzWRDptAeq93qVPNfgpsKlEIEULLSJt8d80tbclX/n5bErH99aYGKCtPDu85kwsoK8XKrrVGO8hvSP7eGFnhUJQho+p2iWPPpQYh7pPCQ8KAkLfF+GJYIX3R0/E/byzIPCEWACFgQfrJFvdvjqQdNzKo7XLv00uxcu2WjnHMZAY4lpWtMVN/XQFHEoGpgpqO77Sf3qRLeJybHGoY= }
