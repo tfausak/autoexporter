@@ -28,12 +28,11 @@ install:
   - stack build --only-dependencies --test
 script:
   - stack build --pedantic --test
-  - rm -f -v "$(stack path --dist-dir)/autoexporter-*.tar.gz"
   - stack sdist
 after_success:
   - mkdir -p deploy
-  - cp "$(stack path --dist-dir)/autoexporter-*.tar.gz" deploy/autoexporter.tgz
-  - cp "$(stack exec which autoexporter)" deploy/autoexporter
+  - cp -v "$(stack path --dist-dir)/autoexporter-$TRAVIS_TAG.tar.gz" deploy/autoexporter.tgz
+  - cp -v "$(stack exec which autoexporter)" deploy/autoexporter
 deploy:
   - skip_cleanup: true
     on: { tags: true }
