@@ -37,6 +37,12 @@ after_success:
   - mkdir -p deploy
   - cp -v "$(stack path --dist-dir)/autoexporter-$TRAVIS_TAG.tar.gz" deploy/autoexporter.tgz
   - cp -v "$(stack exec which autoexporter)" deploy/autoexporter
+  - mkdir -p "$HOME/.stack/upload"
+  - >-
+    echo "{
+    \"username\": \"$HACKAGE_USERNAME\",
+    \"password\": \"$HACKAGE_PASSWORD\"
+    }" > "$HOME/.stack/upload/credentials.json"
 deploy:
   - skip_cleanup: true
     on: { tags: true }
@@ -48,10 +54,4 @@ deploy:
   - skip_cleanup: true
     on: { tags: true }
     provider: script
-    script: >
-      mkdir -p "$HOME/.stack/upload" &&
-      echo "{
-        \"username\": \"$HACKAGE_USERNAME\",
-        \"password\": \"$HACKAGE_PASSWORD\"
-        }" > "$HOME/.stack/upload/credentials.json" &&
-      stack upload .
+    script: stack upload .
