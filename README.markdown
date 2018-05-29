@@ -60,9 +60,9 @@ things to look out for:
   some module `M`, it won't pull in `M.A.B`. If you need deep re-exporting,
   please pass `--deep` to Autoexporter like this:
 
-```haskell
-{-# OPTIONS_GHC -F -pgmF autoexporter -optF --deep #-}
-```
+  ```haskell
+  {-# OPTIONS_GHC -F -pgmF autoexporter -optF --deep #-}
+  ```
 
 [Autoexporter]: https://github.com/tfausak/autoexporter
 [Version badge]: https://www.stackage.org/package/autoexporter/badge/nightly?label=version
