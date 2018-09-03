@@ -16,7 +16,7 @@ synopsis: Automatically re-export modules.
 
 dependencies:
   base: '>= 4.9.0 && < 4.12'
-  Cabal: '>= 1.24.0 && < 1.25 || >= 2.0.1 && < 2.3'
+  Cabal: '>= 1.24.0 && < 1.25 || >= 2.0.1 && < 2.5'
   directory: '>= 1.2.6 && < 1.4'
   filepath: '>= 1.4.1 && < 1.5'
 ghc-options:
