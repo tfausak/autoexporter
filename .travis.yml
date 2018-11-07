@@ -54,4 +54,4 @@ deploy:
   - skip_cleanup: true
     on: { tags: true }
     provider: script
-    script: stack upload .
+    script: stack upload --no-signature .
