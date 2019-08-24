@@ -1,5 +1,5 @@
 name: autoexporter
-version: 1.1.14
+version: 1.1.15
 
 category: Utility
 description: Autoexporter automatically re-exports modules.
