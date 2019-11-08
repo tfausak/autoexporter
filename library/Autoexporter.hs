@@ -105,7 +105,8 @@ isHaskellFile x = List.isSuffixOf ".hs" x || List.isSuffixOf ".lhs" x
 renderModule :: String -> [String] -> String
 renderModule name modules =
   unlines'
-    [ unwords ["module", name, "("]
+    [ "{-# OPTIONS_GHC -fno-warn-dodgy-exports -fno-warn-unused-imports #-}"
+    , unwords ["module", name, "("]
     , unlines' (map renderExport modules)
     , ") where"
     , unlines' (map renderImport modules)
