@@ -15,8 +15,8 @@ maintainer: Taylor Fausak
 synopsis: Automatically re-export modules.
 
 dependencies:
-  base: '>= 4.9.0 && < 4.14'
-  Cabal: '>= 1.24.0 && < 1.25 || >= 2.0.1 && < 2.5 || >= 3.0.0 && < 3.1'
+  base: '>= 4.9.0 && < 4.15'
+  Cabal: '>= 1.24.0 && < 1.25 || >= 2.0.1 && < 2.5 || >= 3.0.0 && < 3.3'
   directory: '>= 1.2.6 && < 1.4'
   filepath: '>= 1.4.1 && < 1.5'
 ghc-options:
