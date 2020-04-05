@@ -1,7 +1,8 @@
-# [Autoexporter][]
+# Autoexporter
 
-[![Version badge][]][version]
-[![Build badge][]][build]
+[![Travis CI](https://travis-ci.org/tfausak/autoexporter.svg?branch=master)](https://travis-ci.org/tfausak/autoexporter)
+[![Hackage](https://img.shields.io/hackage/v/autoexporter)](https://hackage.haskell.org/package/autoexporter)
+[![Stackage](https://www.stackage.org/package/autoexporter/badge/nightly?label=stackage)](https://www.stackage.org/package/autoexporter)
 
 Autoexporter automatically re-exports Haskell modules.
 
@@ -63,9 +64,3 @@ things to look out for:
   ```haskell
   {-# OPTIONS_GHC -F -pgmF autoexporter -optF --deep #-}
   ```
-
-[Autoexporter]: https://github.com/tfausak/autoexporter
-[Version badge]: https://www.stackage.org/package/autoexporter/badge/nightly?label=version
-[version]: https://www.stackage.org/nightly/package/autoexporter
-[Build badge]: https://travis-ci.org/tfausak/autoexporter.svg?branch=master
-[build]: https://travis-ci.org/tfausak/autoexporter
