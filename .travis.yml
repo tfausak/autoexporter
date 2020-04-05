@@ -1,57 +1,48 @@
-sudo: false
+os: linux
+dist: bionic
 language: generic
 addons:
   apt:
     packages:
       - libgmp-dev
-cache:
-  directories:
-    - "$HOME/.local/bin"
-    - "$HOME/.stack"
 env:
   global:
     - HACKAGE_USERNAME=fozworth
+    # HACKAGE_PASSWORD
     - secure: e6UL1h4KJ8f8ONHXf7KN/vpVQg9+44fIvwrOF5eh/KMUTw5DwhFkolPVU/eIHXZ1FB61++K4iuZF44m96ql6CFJSILjH9BgPMs8hxiCEorOYWcpVJ7lvj0lVZYqfuR2+uVYa3OXzl1MMEgtLlD/B1M3CMHTIZNf4Q/zlEmkxwPg9ehbeteJ3Xb/BqozFc/oX9ivfAyfEvNhEtiWvikXFvGVvjKcOJpH/asppJLRwGHKIfvwSG4NXdSkDhj2vjoOOCxyKHj3cYJSyElgF6ISIHl+gc2D1uycRqO47IPvlqiIg06hIcfjDMO2GicHekx9OMs+h8caZPwb7854Rz8x1fyJsuRyK7ZRwfxr4U6oRgCmwdY42+TObSC/Ky3BE+MX3YS65nYStLqVJMlwf+ydv2nAM0CMAzSwwAY062FbQRgC7RYOty94Ego68WzvVp9XVHakulkHT4/AytQDJwDzMATMxqrI43oBLwt4QRKafSi91T7Mm9aE7NB3ezeHjxIOxdBp2qWCT25s+GWMwnYYVhjNjFfAD0wYrU1tyU7qL5cMCLLwEEtY07SpKQF1h4+jFqCOLSuuRsV4Iu7qv0PphH428Y5gGOgqnVhm9sg+ZVt72Zy4zoBQimXOeL15eAO4XUljVP5l33BgjID073iR9ZzyI8y3lv+ERGNW7JOKhmJk=
+
+cache:
+  directories:
+    - $HOME/.local/bin
+    - $HOME/.stack
+
 before_install:
-  - | # Install Stack.
-    if test ! -f "$HOME/.local/bin/stack"
+  - |
+    if ! test -f "$HOME/.local/bin/stack"
     then
-      VERSION=1.9.1
-      URL="https://github.com/commercialhaskell/stack/releases/download/v$VERSION/stack-$VERSION-$TRAVIS_OS_NAME-x86_64.tar.gz"
-      cd /tmp
-      curl --location "$URL" > stack.tar.gz
+      VERSION=2.3.0.1
+      URL="https://github.com/commercialhaskell/stack/releases/download/v$VERSION/stack-$VERSION-linux-x86_64-static.tar.gz"
+      curl --location --output stack.tar.gz "$URL"
       gunzip stack.tar.gz
       tar --extract --file stack.tar --strip-components 1
       mkdir --parents "$HOME/.local/bin"
       mv stack "$HOME/.local/bin"
-      cd -
+      rm stack.tar
     fi
   - stack --version
+
 install:
   - stack setup
   - stack build --only-dependencies --test
+
 script:
-  - stack build --pedantic --test
+  - stack build --no-run-tests --pedantic --test
+  - stack build --test
   - stack sdist
-after_success:
-  - mkdir -p deploy
-  - cp -v "$(stack path --dist-dir)/autoexporter-$TRAVIS_TAG.tar.gz" deploy/autoexporter.tgz
-  - cp -v "$(stack exec which autoexporter)" deploy/autoexporter
-  - mkdir -p "$HOME/.stack/upload"
-  - >-
-    echo "{
-    \"username\": \"$HACKAGE_USERNAME\",
-    \"password\": \"$HACKAGE_PASSWORD\"
-    }" > "$HOME/.stack/upload/credentials.json"
+
 deploy:
-  - skip_cleanup: true
-    on: { tags: true }
-    provider: releases
-    api_key: { secure: GWl3PAtImTO93o1HjaYn5AwaB9ec3k9f5Qxpn20VAE/jNEjGuDphOfhUo7mK5jCfL6w2bPXkpFM1bAbdy4j4GsvwD5JCJtXGONiLNHPfwG49y4BF1nl+w7zJbJIZEJHbxIXgWLYhoqDW03VavU48YnVCugYTtezOqfTBxP0TWZOARlumaA2vHeTXc1sJS8dRSxpGJ03QR4q/Giw+PtC9SNVNIW0+cVT1v5lITDhd4de9Sgu9AHbBrRXCb/P4YCQJ3hX5JWRE5KaeGgpPYlGAYlCM+3CxgjJ1HsjJKQQzzlHEkZ/v1/D3S0ewm6G8ZRkz9pW9glYmxAfA7RqaxQVP/2Z3cyxiVMiMvRxzP8fChoBF+2v/VEzhofJj+IHvqNyMbc0FkfVAadh5hrgY/4AdLN53crH90qdXMy5K+vtngLf61CY4oKUcdE9sBObrtCxXRU8BaHeuUfhk+bkfkCcv9exa4JA1DLxngXNpqNBnGkYEfq914nbZgu0BCVDw3a94zzv6/fvUMaQANIabxFDkec1PjlnE5+F4z5LhABX5YMpGxlz1AHpf5lnWPtPVl8sjBbywombsSqwx/KIrzitPr1DOqd5GbdLy25lYicS3nQPdh6d8P/1AbY9H6Gd7LYjT6yy76jeXWE2KOgCwqodd0/xwftbYz4PsBh8ap6srhOs= }
-    file:
-      - deploy/autoexporter.tgz
-      - deploy/autoexporter
-  - skip_cleanup: true
-    on: { tags: true }
-    provider: script
-    script: stack upload --no-signature .
+  provider: script
+  on:
+    tags: true
+  skip_cleanup: true
+  script: yes | stack upload .
