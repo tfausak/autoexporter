@@ -18,17 +18,17 @@ cache:
 
 before_install:
   - |
-    if ! test -f "$HOME/.local/bin/stack"
-    then
-      VERSION=2.3.0.1
-      URL="https://github.com/commercialhaskell/stack/releases/download/v$VERSION/stack-$VERSION-linux-x86_64-static.tar.gz"
+    # if ! test -f "$HOME/.local/bin/stack"
+    # then
+      VERSION=2.3.1
+      URL="https://github.com/commercialhaskell/stack/releases/download/v$VERSION/stack-$VERSION-linux-x86_64.tar.gz"
       curl --location --output stack.tar.gz "$URL"
       gunzip stack.tar.gz
       tar --extract --file stack.tar --strip-components 1
       mkdir --parents "$HOME/.local/bin"
       mv stack "$HOME/.local/bin"
       rm stack.tar
-    fi
+    # fi
   - stack --version
 
 install:
