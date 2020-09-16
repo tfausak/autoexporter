@@ -54,5 +54,6 @@ executable autoexporter
   build-depends:
     base -any
     , autoexporter -any
+  ghc-options: -rtsopts -threaded
   hs-source-dirs: src/exe
   main-is: Main.hs
