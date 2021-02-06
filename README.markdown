@@ -1,6 +1,6 @@
 # Autoexporter
 
-[![Travis CI](https://travis-ci.org/tfausak/autoexporter.svg?branch=master)](https://travis-ci.org/tfausak/autoexporter)
+[![CI](https://github.com/tfausak/autoexporter/workflows/CI/badge.svg)](https://github.com/tfausak/autoexporter/actions)
 [![Hackage](https://img.shields.io/hackage/v/autoexporter)](https://hackage.haskell.org/package/autoexporter)
 [![Stackage](https://www.stackage.org/package/autoexporter/badge/nightly?label=stackage)](https://www.stackage.org/package/autoexporter)
 
