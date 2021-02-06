@@ -28,6 +28,7 @@ library
     -Weverything
     -Wno-implicit-prelude
     -Wno-missing-deriving-strategies
+    -Wno-missing-exported-signatures
     -Wno-unsafe
   exposed-modules: Autoexporter
   hs-source-dirs: src/lib
