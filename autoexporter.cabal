@@ -8,7 +8,7 @@ description: Autoexporter automatically re-exports modules.
 
 build-type: Simple
 category: Utility
-extra-source-files: README.markdown
+extra-source-files: CHANGELOG.markdown README.markdown
 license-file: LICENSE.markdown
 license: MIT
 maintainer: Taylor Fausak
