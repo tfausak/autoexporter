@@ -46,7 +46,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ steps.setup-haskell.outputs.cabal-store }}
-          key: ${{ matrix.platform }}-${{ matrix.ghc }-${{ hashFiles('cabal.project.freeze') }}
+          key: ${{ matrix.platform }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
           restore-keys: ${{ matrix.platform }}-${{ matrix.ghc }}-
 
       - run: cabal build
