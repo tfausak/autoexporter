@@ -59,7 +59,7 @@ jobs:
 
       - uses: svenstaro/upx-action@v2
         with:
-          file: ${{ steps.artifact.outputs.directory }}/argo${{ matrix.extension }}
+          file: ${{ steps.artifact.outputs.directory }}/autoexporter${{ matrix.extension }}
 
       - uses: actions/upload-artifact@v2
         with:
