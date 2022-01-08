@@ -5,7 +5,9 @@
 --
 -- For more information, please see the README on GitHub:
 -- <https://github.com/tfausak/autoexporter#readme>.
-module Autoexporter ( autoexporter ) where
+module Autoexporter
+  ( autoexporter
+  ) where
 
 import qualified Control.Exception as Exception
 import qualified Data.List as List
@@ -79,13 +81,12 @@ instance Exception.Exception InvalidArguments
 -- >>> toModuleName "Qualified/Module.name"
 -- Just (ModuleName ["Qualified","Module"])
 toModuleName :: FilePath -> Maybe Cabal.ModuleName
-toModuleName
-  = Maybe.listToMaybe
-  . Maybe.mapMaybe Cabal.simpleParse
-  . fmap (List.intercalate ".")
-  . List.tails
-  . FilePath.splitDirectories
-  . FilePath.dropExtensions
+toModuleName =
+  Maybe.listToMaybe
+    . Maybe.mapMaybe (Cabal.simpleParse . List.intercalate ".")
+    . List.tails
+    . FilePath.splitDirectories
+    . FilePath.dropExtensions
 
 
 -- | This exception type is thrown when we can't create a valid module name
@@ -118,16 +119,15 @@ listDirectoryDeep directory = do
   let
     listEntry entry = do
       isDirectory <- Directory.doesDirectoryExist entry
-      if isDirectory
-        then listDirectoryDeep entry
-        else pure [entry]
+      if isDirectory then listDirectoryDeep entry else pure [entry]
   fmap concat (mapM listEntry entries)
 
 
 -- | Given a list of file paths, returns a sorted list of module names from the
 -- entries that were Haskell files.
 getModuleNames :: [FilePath] -> [Cabal.ModuleName]
-getModuleNames = List.sort . Maybe.mapMaybe toModuleName . filter isHaskellFile
+getModuleNames =
+  List.sort . Maybe.mapMaybe toModuleName . filter isHaskellFile
 
 
 -- | This predicate tells you if the given file path is a Haskell source file.
