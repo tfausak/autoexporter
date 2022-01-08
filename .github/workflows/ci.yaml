@@ -17,7 +17,7 @@ jobs:
           - { platform: ubuntu, ghc: 9.2.1 }
           - { platform: ubuntu, ghc: 9.0.2 }
           - { platform: macos, ghc: 9.2.1 }
-          - { platform: windows, ghc: 9.2.1 }
+          - { platform: windows, ghc: 9.2.1, extension: .exe }
           - { platform: ubuntu, ghc: 8.10.7 }
     runs-on: ${{ matrix.platform }}-latest
     name: GHC ${{ matrix.ghc }} on ${{ matrix.platform }}
@@ -56,6 +56,10 @@ jobs:
       - run: cabal check
 
       - run: cabal sdist --output-dir ${{ steps.artifact.outputs.directory }}
+
+      - uses: svenstaro/upx-action@v2
+        with:
+          file: ${{ steps.artifact.outputs.directory }}/argo${{ matrix.extension }}
 
       - uses: actions/upload-artifact@v2
         with:
