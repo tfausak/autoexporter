@@ -119,7 +119,8 @@
     },
     "build-docker": {
       "container": {
-        "image": "public.ecr.aws/acilearning/haskell:9.4.4"
+        "image": "public.ecr.aws/acilearning/haskell:9.4.4",
+        "options": "--user root"
       },
       "runs-on": "ubuntu-22.04",
       "steps": [
