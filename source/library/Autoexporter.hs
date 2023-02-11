@@ -6,8 +6,9 @@
 -- For more information, please see the README on GitHub:
 -- <https://github.com/tfausak/autoexporter#readme>.
 module Autoexporter
-  ( autoexporter
-  ) where
+  ( autoexporter,
+  )
+where
 
 import qualified Control.Exception as Exception
 import qualified Data.List as List
@@ -17,7 +18,6 @@ import qualified Distribution.Text as Cabal
 import qualified System.Directory as Directory
 import qualified System.Environment as Environment
 import qualified System.FilePath as FilePath
-
 
 autoexporter :: IO ()
 autoexporter = do
@@ -52,7 +52,6 @@ autoexporter = do
   let content = renderModule moduleName moduleNames
   writeFile output content
 
-
 -- | This type describes how to search for modules to export. A shallow search
 -- only considers files in one directory. A deep search considers all files in
 -- the directory tree.
@@ -61,7 +60,6 @@ data Depth
   | DepthDeep
   deriving (Eq, Show)
 
-
 -- | This exception type is thrown when we don't know how to interpret the
 -- arguments passed to the program.
 newtype InvalidArguments
@@ -69,7 +67,6 @@ newtype InvalidArguments
   deriving (Eq, Show)
 
 instance Exception.Exception InvalidArguments
-
 
 -- | This function attempts to convert an arbitrary file path into a valid
 -- Haskell module name. Any extensions are ignored.
@@ -88,7 +85,6 @@ toModuleName =
     . FilePath.splitDirectories
     . FilePath.dropExtensions
 
-
 -- | This exception type is thrown when we can't create a valid module name
 -- from the source file path.
 newtype InvalidModuleName
@@ -96,7 +92,6 @@ newtype InvalidModuleName
   deriving (Eq, Show)
 
 instance Exception.Exception InvalidModuleName
-
 
 -- | Lists all of the entries in the given directory. Note that unlike
 -- 'Directory.listDirectory' the results of calling this function will include
@@ -106,22 +101,18 @@ listDirectory depth = case depth of
   DepthShallow -> listDirectoryShallow
   DepthDeep -> listDirectoryDeep
 
-
 listDirectoryShallow :: FilePath -> IO [FilePath]
 listDirectoryShallow directory = do
   entries <- Directory.listDirectory directory
   pure (fmap (FilePath.combine directory) entries)
 
-
 listDirectoryDeep :: FilePath -> IO [FilePath]
 listDirectoryDeep directory = do
   entries <- listDirectoryShallow directory
-  let
-    listEntry entry = do
-      isDirectory <- Directory.doesDirectoryExist entry
-      if isDirectory then listDirectoryDeep entry else pure [entry]
+  let listEntry entry = do
+        isDirectory <- Directory.doesDirectoryExist entry
+        if isDirectory then listDirectoryDeep entry else pure [entry]
   fmap concat (mapM listEntry entries)
-
 
 -- | Given a list of file paths, returns a sorted list of module names from the
 -- entries that were Haskell files.
@@ -129,32 +120,28 @@ getModuleNames :: [FilePath] -> [Cabal.ModuleName]
 getModuleNames =
   List.sort . Maybe.mapMaybe toModuleName . filter isHaskellFile
 
-
 -- | This predicate tells you if the given file path is a Haskell source file.
 isHaskellFile :: FilePath -> Bool
 isHaskellFile = flip elem haskellExtensions . FilePath.takeExtensions
-
 
 -- | These are the extensions that we consider to be Haskell source files.
 haskellExtensions :: [String]
 haskellExtensions = [".hs", ".lhs"]
 
-
 -- | Given a module name and a list of module names to re-export, renders a
 -- module with all the appropriate imports and exports.
 renderModule :: Cabal.ModuleName -> [Cabal.ModuleName] -> String
-renderModule moduleName moduleNames = unlines
-  [ "{-# OPTIONS_GHC -fno-warn-dodgy-exports -fno-warn-unused-imports #-}"
-  , "module " <> Cabal.display moduleName <> " ("
-  , List.intercalate "\n" (fmap renderExport moduleNames)
-  , ") where"
-  , List.intercalate "\n" (fmap renderImport moduleNames)
-  ]
-
+renderModule moduleName moduleNames =
+  unlines
+    [ "{-# OPTIONS_GHC -fno-warn-dodgy-exports -fno-warn-unused-imports #-}",
+      "module " <> Cabal.display moduleName <> " (",
+      List.intercalate "\n" (fmap renderExport moduleNames),
+      ") where",
+      List.intercalate "\n" (fmap renderImport moduleNames)
+    ]
 
 renderExport :: Cabal.ModuleName -> String
 renderExport moduleName = "module " <> Cabal.display moduleName <> ","
-
 
 renderImport :: Cabal.ModuleName -> String
 renderImport moduleName = "import " <> Cabal.display moduleName

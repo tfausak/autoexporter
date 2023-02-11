@@ -1,6 +1,7 @@
 module Main
-  ( main
-  ) where
+  ( main,
+  )
+where
 
 import qualified Autoexporter
 

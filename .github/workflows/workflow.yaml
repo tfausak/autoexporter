@@ -1,7 +1,7 @@
 {
   "jobs": {
     "build": {
-      "name": "Build on ${{ matrix.platform }}",
+      "name": "Build on ${{ matrix.platform }} with GHC ${{ matrix.ghc }}",
       "runs-on": "${{ matrix.platform }}-${{ matrix.version }}",
       "steps": [
         {
