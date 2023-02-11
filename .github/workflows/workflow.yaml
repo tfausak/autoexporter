@@ -172,28 +172,28 @@
         {
           "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_name": "autoexporter-$tag-ubuntu",
+            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-ubuntu",
             "file": "artifact/ubuntu-9.4.4/autoexporter"
           }
         },
         {
           "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_name": "autoexporter-$tag-macos",
+            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-macos",
             "file": "artifact/macos-9.4.4/autoexporter"
           }
         },
         {
           "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_name": "autoexporter-$tag-windows.exe",
+            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-windows.exe",
             "file": "artifact/windows-9.4.4/autoexporter.exe"
           }
         },
         {
           "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_name": "autoexporter-$tag.tar.gz",
+            "asset_name": "autoexporter-${{ github.event.release.tag_name }}.tar.gz",
             "file": "artifact/ubuntu-9.4.4/autoexporter-$tag.tar.gz"
           }
         },
