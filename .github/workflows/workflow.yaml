@@ -170,51 +170,31 @@
           }
         },
         {
-          "env": {
-            "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
-          },
-          "uses": "actions/upload-release-asset@v1",
+          "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_content_type": "application/octet-stream",
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-ubuntu",
-            "asset_path": "artifact/ubuntu-9.4.4/autoexporter-${{ github.event.release.tag_name }}",
-            "upload_url": "${{ github.event.release.upload_url }}"
+            "asset_name": "autoexporter-$tag-ubuntu",
+            "file": "artifact/ubuntu-9.4.4/autoexporter"
           }
         },
         {
-          "env": {
-            "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
-          },
-          "uses": "actions/upload-release-asset@v1",
+          "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_content_type": "application/octet-stream",
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-macos",
-            "asset_path": "artifact/macos-9.4.4/autoexporter-${{ github.event.release.tag_name }}",
-            "upload_url": "${{ github.event.release.upload_url }}"
+            "asset_name": "autoexporter-$tag-macos",
+            "file": "artifact/macos-9.4.4/autoexporter"
           }
         },
         {
-          "env": {
-            "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
-          },
-          "uses": "actions/upload-release-asset@v1",
+          "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_content_type": "application/octet-stream",
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-windows.exe",
-            "asset_path": "artifact/windows-9.4.4/autoexporter-${{ github.event.release.tag_name }}.exe",
-            "upload_url": "${{ github.event.release.upload_url }}"
+            "asset_name": "autoexporter-$tag-windows.exe",
+            "file": "artifact/windows-9.4.4/autoexporter.exe"
           }
         },
         {
-          "env": {
-            "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
-          },
-          "uses": "actions/upload-release-asset@v1",
+          "uses": "svenstaro/upload-release-action@v2",
           "with": {
-            "asset_content_type": "application/gzip",
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}.tar.gz",
-            "asset_path": "artifact/ubuntu-9.4.4/autoexporter-${{ github.event.release.tag_name }}.tar.gz",
-            "upload_url": "${{ github.event.release.upload_url }}"
+            "asset_name": "autoexporter-$tag.tar.gz",
+            "file": "artifact/ubuntu-9.4.4/autoexporter-$tag.tar.gz"
           }
         },
         {
