@@ -128,6 +128,13 @@
           "uses": "actions/checkout@v3"
         },
         {
+          "uses": "actions/cache@v3",
+          "with": {
+            "key": "cabal-packages",
+            "path": "/root/.cabal/packages"
+          }
+        },
+        {
           "run": "cabal update"
         },
         {
@@ -139,9 +146,9 @@
         {
           "uses": "actions/cache@v3",
           "with": {
-            "key": "docker-${{ hashFiles('cabal.project.freeze') }}",
+            "key": "cabal-store-${{ hashFiles('cabal.project.freeze') }}",
             "path": "/root/.cabal/store",
-            "restore-keys": "docker-"
+            "restore-keys": "cabal-store-"
           }
         },
         {
