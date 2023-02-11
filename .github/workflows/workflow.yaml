@@ -131,7 +131,7 @@
           "uses": "actions/cache@v3",
           "with": {
             "key": "cabal-packages",
-            "path": "/root/.cabal/packages"
+            "path": "~/.cabal/packages"
           }
         },
         {
@@ -147,21 +147,12 @@
           "uses": "actions/cache@v3",
           "with": {
             "key": "cabal-store-${{ hashFiles('cabal.project.freeze') }}",
-            "path": "/root/.cabal/store",
+            "path": "~/.cabal/store",
             "restore-keys": "cabal-store-"
           }
         },
         {
           "run": "cabal build"
-        },
-        {
-          "run": "ls -A -l /root"
-        },
-        {
-          "run": "ls -A -l /github/home"
-        },
-        {
-          "run": "ls -A -l ~"
         }
       ]
     },
