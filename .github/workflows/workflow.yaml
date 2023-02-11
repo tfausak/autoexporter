@@ -121,7 +121,7 @@
       "container": {
         "image": "public.ecr.aws/acilearning/haskell:9.4.4"
       },
-      "run-on": "ubuntu-22.04",
+      "runs-on": "ubuntu-22.04",
       "steps": [
         {
           "uses": "actions/checkout@v3"
