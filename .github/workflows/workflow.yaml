@@ -158,7 +158,10 @@
           "run": "ls -A -l /root"
         },
         {
-          "run": "ls -l /root/.cabal"
+          "run": "ls -A -l /github/home"
+        },
+        {
+          "run": "ls -A -l ~"
         }
       ]
     },
