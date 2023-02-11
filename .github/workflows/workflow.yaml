@@ -194,7 +194,7 @@
           "uses": "svenstaro/upload-release-action@v2",
           "with": {
             "asset_name": "autoexporter-${{ github.event.release.tag_name }}.tar.gz",
-            "file": "artifact/ubuntu-9.4.4/autoexporter-$tag.tar.gz"
+            "file": "artifact/ubuntu-9.4.4/autoexporter-${{ github.event.release.tag_name }}.tar.gz"
           }
         },
         {
