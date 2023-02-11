@@ -226,6 +226,11 @@
   "name": "Workflow",
   "on": {
     "push": null,
+    "release": {
+      "types": [
+        "created"
+      ]
+    },
     "schedule": [
       {
         "cron": "0 0 * * *"
