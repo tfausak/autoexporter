@@ -153,6 +153,12 @@
         },
         {
           "run": "cabal build"
+        },
+        {
+          "run": "ls -A -l /root"
+        },
+        {
+          "run": "ls -l /root/.cabal"
         }
       ]
     },
