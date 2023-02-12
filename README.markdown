@@ -1,6 +1,6 @@
 # Autoexporter
 
-[![CI](https://github.com/tfausak/autoexporter/workflows/CI/badge.svg)](https://github.com/tfausak/autoexporter/actions)
+[![Workflow](https://github.com/tfausak/autoexporter/actions/workflows/workflow.yaml/badge.svg)](https://github.com/tfausak/autoexporter/actions/workflows/workflow.yaml)
 [![Hackage](https://img.shields.io/hackage/v/autoexporter)](https://hackage.haskell.org/package/autoexporter)
 [![Stackage](https://www.stackage.org/package/autoexporter/badge/nightly?label=stackage)](https://www.stackage.org/package/autoexporter)
 
