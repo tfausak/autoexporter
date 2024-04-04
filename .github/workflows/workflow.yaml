@@ -1,7 +1,7 @@
 {
   "jobs": {
     "build": {
-      "name": "Build on ${{ matrix.platform }} with GHC ${{ matrix.ghc }}",
+      "name": "GHC ${{ matrix.ghc }} on ${{ matrix.platform }} ${{ matrix.version }}",
       "runs-on": "${{ matrix.platform }}-${{ matrix.version }}",
       "steps": [
         {
@@ -11,23 +11,14 @@
           "run": "mkdir artifact"
         },
         {
-          "id": "artifact",
-          "run": "echo 'directory=artifact/${{ matrix.platform }}-${{ matrix.ghc }}' >> $GITHUB_OUTPUT",
-          "shell": "bash"
-        },
-        {
-          "run": "mkdir ${{ steps.artifact.outputs.directory }}"
-        },
-        {
           "id": "haskell",
           "uses": "haskell-actions/setup@v2",
           "with": {
-            "cabal-version": "3.10.2.1",
             "ghc-version": "${{ matrix.ghc }}"
           }
         },
         {
-          "run": "cabal sdist --output-dir ${{ steps.artifact.outputs.directory }}"
+          "run": "cabal sdist --output-dir artifact"
         },
         {
           "run": "cabal configure --enable-optimization=2 --flags pedantic --jobs"
@@ -36,7 +27,7 @@
           "run": "cat cabal.project.local"
         },
         {
-          "run": "cp cabal.project.local ${{ steps.artifact.outputs.directory }}"
+          "run": "cp cabal.project.local artifact"
         },
         {
           "run": "cabal freeze"
@@ -45,17 +36,17 @@
           "run": "cat cabal.project.freeze"
         },
         {
-          "run": "cp cabal.project.freeze ${{ steps.artifact.outputs.directory }}"
+          "run": "cp cabal.project.freeze artifact"
         },
         {
           "run": "cabal outdated --v2-freeze-file cabal.project.freeze"
         },
         {
-          "uses": "actions/cache@v3",
+          "uses": "actions/cache@v4",
           "with": {
-            "key": "${{ matrix.platform }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}",
+            "key": "${{ matrix.platform }}-${{ matrix.version }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}",
             "path": "${{ steps.haskell.outputs.cabal-store }}",
-            "restore-keys": "${{ matrix.platform }}-${{ matrix.ghc }}-"
+            "restore-keys": "${{ matrix.platform }}-${{ matrix.version }}-${{ matrix.ghc }}-"
           }
         },
         {
@@ -68,18 +59,12 @@
           "run": "cabal build"
         },
         {
-          "run": "cp \"$( cabal list-bin autoexporter )\" ${{ steps.artifact.outputs.directory }}"
+          "run": "cp \"$( cabal list-bin autoexporter )\" artifact"
         },
         {
-          "uses": "svenstaro/upx-action@v2",
+          "uses": "actions/upload-artifact@v4",
           "with": {
-            "files": "${{ steps.artifact.outputs.directory }}/autoexporter${{ matrix.extension }}"
-          }
-        },
-        {
-          "uses": "actions/upload-artifact@v3",
-          "with": {
-            "name": "autoexporter-${{ github.sha }}",
+            "name": "autoexporter-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.version }}-ghc-${{ matrix.ghc }}",
             "path": "artifact"
           }
         }
@@ -88,28 +73,33 @@
         "matrix": {
           "include": [
             {
-              "ghc": "9.8.1",
+              "ghc": "9.8",
               "platform": "macos",
-              "version": "12"
+              "version": "13"
             },
             {
-              "ghc": "9.4.8",
+              "ghc": "9.8",
+              "platform": "macos",
+              "version": "14"
+            },
+            {
+              "ghc": "9.4",
               "platform": "ubuntu",
               "version": "22.04"
             },
             {
-              "ghc": "9.6.4",
+              "ghc": "9.6",
               "platform": "ubuntu",
               "version": "22.04"
             },
             {
-              "ghc": "9.8.1",
+              "ghc": "9.8",
               "platform": "ubuntu",
               "version": "22.04"
             },
             {
               "extension": ".exe",
-              "ghc": "9.8.1",
+              "ghc": "9.8",
               "platform": "windows",
               "version": "2022"
             }
@@ -129,6 +119,20 @@
         }
       ]
     },
+    "gild": {
+      "runs-on": "ubuntu-22.04",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "uses": "tfausak/cabal-gild-setup-action@v2"
+        },
+        {
+          "run": "cabal-gild --input autoexporter.cabal --mode check"
+        }
+      ]
+    },
     "hlint": {
       "name": "HLint",
       "runs-on": "ubuntu-22.04",
@@ -137,10 +141,7 @@
           "uses": "actions/checkout@v4"
         },
         {
-          "uses": "haskell-actions/hlint-setup@v2",
-          "with": {
-            "version": 3.5
-          }
+          "uses": "haskell-actions/hlint-setup@v2"
         },
         {
           "uses": "haskell-actions/hlint-run@v2",
@@ -163,48 +164,47 @@
       ]
     },
     "release": {
-      "if": "github.event_name == 'release'",
+      "env": {
+        "PREFIX": "autoexporter-${{ github.event.release.tag_name }}"
+      },
+      "if": "${{ github.event_name == 'release' }}",
       "name": "Release",
       "needs": "build",
       "runs-on": "ubuntu-22.04",
       "steps": [
         {
-          "uses": "actions/download-artifact@v3",
+          "uses": "actions/download-artifact@v4"
+        },
+        {
+          "run": "sh -exc 'for d in *; do cd $d; tar --extract --file artifact.tar --verbose; cd ..; done'"
+        },
+        {
+          "run": "cp autoexporter-${{ github.sha }}-ubuntu-22.04-ghc-9.8/artifact/${{ env.PREFIX }}.tar.gz ."
+        },
+        {
+          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-darwin-x64.tar.gz --verbose autoexporter",
+          "working-directory": "autoexporter-${{ github.sha }}-macos-13-ghc-9.8/artifact"
+        },
+        {
+          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-darwin-arm64.tar.gz --verbose autoexporter",
+          "working-directory": "autoexporter-${{ github.sha }}-macos-14-ghc-9.8/artifact"
+        },
+        {
+          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-linux-x64.tar.gz --verbose autoexporter",
+          "working-directory": "autoexporter-${{ github.sha }}-ubuntu-22.04-ghc-9.8/artifact"
+        },
+        {
+          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-win32-x64.tar.gz --verbose autoexporter.exe",
+          "working-directory": "autoexporter-${{ github.sha }}-windows-2022-ghc-9.8/artifact"
+        },
+        {
+          "uses": "softprops/action-gh-release@v1",
           "with": {
-            "name": "autoexporter-${{ github.sha }}",
-            "path": "artifact"
+            "files": "${{ env.PREFIX }}*.tar.gz"
           }
         },
         {
-          "uses": "svenstaro/upload-release-action@v2",
-          "with": {
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-ubuntu",
-            "file": "artifact/ubuntu-9.8.1/autoexporter"
-          }
-        },
-        {
-          "uses": "svenstaro/upload-release-action@v2",
-          "with": {
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-macos",
-            "file": "artifact/macos-9.8.1/autoexporter"
-          }
-        },
-        {
-          "uses": "svenstaro/upload-release-action@v2",
-          "with": {
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}-windows.exe",
-            "file": "artifact/windows-9.8.1/autoexporter.exe"
-          }
-        },
-        {
-          "uses": "svenstaro/upload-release-action@v2",
-          "with": {
-            "asset_name": "autoexporter-${{ github.event.release.tag_name }}.tar.gz",
-            "file": "artifact/ubuntu-9.8.1/autoexporter-${{ github.event.release.tag_name }}.tar.gz"
-          }
-        },
-        {
-          "run": "cabal upload --publish --username '${{ secrets.HACKAGE_USERNAME }}' --password '${{ secrets.HACKAGE_PASSWORD }}' artifact/ubuntu-9.8.1/autoexporter-${{ github.event.release.tag_name }}.tar.gz"
+          "run": "cabal upload --publish --username '${{ secrets.HACKAGE_USERNAME }}' --password '${{ secrets.HACKAGE_PASSWORD }}' ${{ env.PREFIX }}.tar.gz"
         }
       ]
     }

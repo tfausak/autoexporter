@@ -1,14 +1,14 @@
 cabal-version: 2.2
-
 name: autoexporter
 version: 2.0.0.9
-
 synopsis: Automatically re-export modules.
 description: Autoexporter automatically re-exports modules.
-
 build-type: Simple
 category: Utility
-extra-source-files: CHANGELOG.markdown README.markdown
+extra-source-files:
+  CHANGELOG.markdown
+  README.markdown
+
 license-file: LICENSE.markdown
 license: MIT
 maintainer: Taylor Fausak
@@ -19,15 +19,10 @@ source-repository head
 
 flag pedantic
   default: False
-  description: Enables @-Werror@, which turns warnings into errors.
   manual: True
 
 common library
-  build-depends:
-    , base >= 4.16.0 && < 4.20
-    , Cabal >= 3.6.3 && < 3.11
-    , directory >= 1.3.6 && < 1.4
-    , filepath >= 1.4.2 && < 1.5
+  build-depends: base >=4.16.0 && <4.20
   default-language: Haskell2010
   ghc-options:
     -Weverything
@@ -46,21 +41,23 @@ common library
 
 common executable
   import: library
-
   build-depends: autoexporter
   ghc-options:
     -rtsopts
     -threaded
-    -Wno-unused-packages
 
 library
   import: library
+  build-depends:
+    Cabal >=3.6.3 && <3.11,
+    base >=4.16.0 && <4.20,
+    directory >=1.3.6 && <1.4,
+    filepath >=1.4.2 && <1.5,
 
   exposed-modules: Autoexporter
   hs-source-dirs: source/library
 
 executable autoexporter
   import: executable
-
   hs-source-dirs: source/executable
   main-is: Main.hs
