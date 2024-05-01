@@ -22,7 +22,7 @@ flag pedantic
   manual: True
 
 common library
-  build-depends: base >=4.16.0 && <4.20
+  build-depends: base >=4.17.0 && <4.20
   default-language: Haskell2010
   ghc-options:
     -Weverything
@@ -49,10 +49,9 @@ common executable
 library
   import: library
   build-depends:
-    Cabal >=3.6.3 && <3.11,
-    base >=4.16.0 && <4.20,
+    Cabal-syntax >=3.8.1 && <3.13,
     directory >=1.3.6 && <1.4,
-    filepath >=1.4.2 && <1.5,
+    filepath >=1.4.2 && <1.6,
 
   -- cabal-gild: discover source/library
   exposed-modules: Autoexporter

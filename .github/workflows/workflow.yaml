@@ -9,7 +9,6 @@ jobs:
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
-      - run: ghc-pkg list # TODO
       - run: cabal sdist --output-dir artifact
       - run: cabal configure --enable-optimization=2 --flags=pedantic --jobs
       - run: cat cabal.project.local
