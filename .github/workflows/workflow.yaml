@@ -1,226 +1,113 @@
-{
-  "jobs": {
-    "build": {
-      "name": "GHC ${{ matrix.ghc }} on ${{ matrix.platform }} ${{ matrix.version }}",
-      "runs-on": "${{ matrix.platform }}-${{ matrix.version }}",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4"
-        },
-        {
-          "run": "mkdir artifact"
-        },
-        {
-          "id": "haskell",
-          "uses": "haskell-actions/setup@v2",
-          "with": {
-            "ghc-version": "${{ matrix.ghc }}"
-          }
-        },
-        {
-          "run": "cabal sdist --output-dir artifact"
-        },
-        {
-          "run": "cabal configure --enable-optimization=2 --flags pedantic --jobs"
-        },
-        {
-          "run": "cat cabal.project.local"
-        },
-        {
-          "run": "cp cabal.project.local artifact"
-        },
-        {
-          "run": "cabal freeze"
-        },
-        {
-          "run": "cat cabal.project.freeze"
-        },
-        {
-          "run": "cp cabal.project.freeze artifact"
-        },
-        {
-          "run": "cabal outdated --v2-freeze-file cabal.project.freeze"
-        },
-        {
-          "uses": "actions/cache@v4",
-          "with": {
-            "key": "${{ matrix.platform }}-${{ matrix.version }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}",
-            "path": "${{ steps.haskell.outputs.cabal-store }}",
-            "restore-keys": "${{ matrix.platform }}-${{ matrix.version }}-${{ matrix.ghc }}-"
-          }
-        },
-        {
-          "run": "cabal build --only-download"
-        },
-        {
-          "run": "cabal build --only-dependencies"
-        },
-        {
-          "run": "cabal build"
-        },
-        {
-          "run": "cp \"$( cabal list-bin autoexporter )\" artifact"
-        },
-        {
-          "uses": "actions/upload-artifact@v4",
-          "with": {
-            "name": "autoexporter-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.version }}-ghc-${{ matrix.ghc }}",
-            "path": "artifact"
-          }
-        }
-      ],
-      "strategy": {
-        "matrix": {
-          "include": [
-            {
-              "ghc": "9.8",
-              "platform": "macos",
-              "version": "13"
-            },
-            {
-              "ghc": "9.8",
-              "platform": "macos",
-              "version": "14"
-            },
-            {
-              "ghc": "9.4",
-              "platform": "ubuntu",
-              "version": "22.04"
-            },
-            {
-              "ghc": "9.6",
-              "platform": "ubuntu",
-              "version": "22.04"
-            },
-            {
-              "ghc": "9.8",
-              "platform": "ubuntu",
-              "version": "22.04"
-            },
-            {
-              "extension": ".exe",
-              "ghc": "9.8",
-              "platform": "windows",
-              "version": "2022"
-            }
-          ]
-        }
-      }
-    },
-    "cabal": {
-      "name": "Cabal",
-      "runs-on": "ubuntu-22.04",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4"
-        },
-        {
-          "run": "cabal check"
-        }
-      ]
-    },
-    "gild": {
-      "runs-on": "ubuntu-22.04",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4"
-        },
-        {
-          "uses": "tfausak/cabal-gild-setup-action@v2"
-        },
-        {
-          "run": "cabal-gild --input autoexporter.cabal --mode check"
-        }
-      ]
-    },
-    "hlint": {
-      "name": "HLint",
-      "runs-on": "ubuntu-22.04",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4"
-        },
-        {
-          "uses": "haskell-actions/hlint-setup@v2"
-        },
-        {
-          "uses": "haskell-actions/hlint-run@v2",
-          "with": {
-            "fail-on": "status"
-          }
-        }
-      ]
-    },
-    "ormolu": {
-      "name": "Ormolu",
-      "runs-on": "ubuntu-22.04",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4"
-        },
-        {
-          "uses": "haskell-actions/run-ormolu@v15"
-        }
-      ]
-    },
-    "release": {
-      "env": {
-        "PREFIX": "autoexporter-${{ github.event.release.tag_name }}"
-      },
-      "if": "${{ github.event_name == 'release' }}",
-      "name": "Release",
-      "needs": "build",
-      "runs-on": "ubuntu-22.04",
-      "steps": [
-        {
-          "uses": "actions/download-artifact@v4"
-        },
-        {
-          "run": "sh -exc 'for d in *; do cd $d; tar --extract --file artifact.tar --verbose; cd ..; done'"
-        },
-        {
-          "run": "cp autoexporter-${{ github.sha }}-ubuntu-22.04-ghc-9.8/artifact/${{ env.PREFIX }}.tar.gz ."
-        },
-        {
-          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-darwin-x64.tar.gz --verbose autoexporter",
-          "working-directory": "autoexporter-${{ github.sha }}-macos-13-ghc-9.8/artifact"
-        },
-        {
-          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-darwin-arm64.tar.gz --verbose autoexporter",
-          "working-directory": "autoexporter-${{ github.sha }}-macos-14-ghc-9.8/artifact"
-        },
-        {
-          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-linux-x64.tar.gz --verbose autoexporter",
-          "working-directory": "autoexporter-${{ github.sha }}-ubuntu-22.04-ghc-9.8/artifact"
-        },
-        {
-          "run": "tar --auto-compress --create --file ../../${{ env.PREFIX }}-win32-x64.tar.gz --verbose autoexporter.exe",
-          "working-directory": "autoexporter-${{ github.sha }}-windows-2022-ghc-9.8/artifact"
-        },
-        {
-          "uses": "softprops/action-gh-release@v1",
-          "with": {
-            "files": "${{ env.PREFIX }}*.tar.gz"
-          }
-        },
-        {
-          "run": "cabal upload --publish --username '${{ secrets.HACKAGE_USERNAME }}' --password '${{ secrets.HACKAGE_PASSWORD }}' ${{ env.PREFIX }}.tar.gz"
-        }
-      ]
-    }
-  },
-  "name": "Workflow",
-  "on": {
-    "push": null,
-    "release": {
-      "types": [
-        "created"
-      ]
-    },
-    "schedule": [
-      {
-        "cron": "0 0 * * 1"
-      }
-    ]
-  }
-}
+jobs:
+  build:
+    name: GHC ${{ matrix.ghc }} on ${{ matrix.platform }} ${{ matrix.version }}
+    runs-on: ${{ matrix.platform }}-${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir artifact
+      - id: haskell
+        uses: haskell-actions/setup@v2
+        with:
+          ghc-version: ${{ matrix.ghc }}
+      - run: ghc-pkg list # TODO
+      - run: cabal sdist --output-dir artifact
+      - run: cabal configure --enable-optimization=2 --flags=pedantic --jobs
+      - run: cat cabal.project.local
+      - run: cp cabal.project.local artifact
+      - run: cabal freeze
+      - run: cat cabal.project.freeze
+      - run: cp cabal.project.freeze artifact
+      - run: cabal outdated --v2-freeze-file
+      - uses: actions/cache@v4
+        with:
+          key: ${{ matrix.platform }}-${{ matrix.version }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
+          path: ${{ steps.haskell.outputs.cabal-store }}
+          restore-keys: ${{ matrix.platform }}-${{ matrix.version }}-${{ matrix.ghc }}-
+      - run: cabal build --only-download
+      - run: cabal build --only-dependencies
+      - run: cabal build
+      - run: cp "$( cabal list-bin autoexporter )" artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: autoexporter-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.version }}-ghc-${{ matrix.ghc }}
+          path: artifact
+    strategy:
+      matrix:
+        include:
+          - ghc: 9.8
+            platform: macos
+            version: 13
+          - ghc: 9.8
+            platform: macos
+            version: 14
+          - ghc: 9.4
+            platform: ubuntu
+            version: 22.04
+          - ghc: 9.6
+            platform: ubuntu
+            version: 22.04
+          - ghc: 9.8
+            platform: ubuntu
+            version: 22.04
+          - extension: .exe
+            ghc: 9.8
+            platform: windows
+            version: 2022
+  cabal:
+    name: Cabal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cabal check
+  gild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: tfausak/cabal-gild-setup-action@v2
+      - run: cabal-gild --input autoexporter.cabal --mode check
+  hlint:
+    name: HLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/hlint-setup@v2
+      - uses: haskell-actions/hlint-run@v2
+        with:
+          fail-on: status
+  ormolu:
+    name: Ormolu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/run-ormolu@v15
+  release:
+    env:
+      PREFIX: autoexporter-${{ github.event.release.tag_name }}
+    if: ${{ github.event_name == 'release' }}
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+      - run: sh -exc 'for d in *; do cd $d; tar --extract --file artifact.tar --verbose; cd ..; done'
+      - run: cp autoexporter-${{ github.sha }}-ubuntu-22.04-ghc-9.8/artifact/${{ env.PREFIX }}.tar.gz .
+      - run: tar --auto-compress --create --file ../../${{ env.PREFIX }}-darwin-x64.tar.gz --verbose autoexporter
+        working-directory: autoexporter-${{ github.sha }}-macos-13-ghc-9.8/artifact
+      - run: tar --auto-compress --create --file ../../${{ env.PREFIX }}-darwin-arm64.tar.gz --verbose autoexporter
+        working-directory: autoexporter-${{ github.sha }}-macos-14-ghc-9.8/artifact
+      - run: tar --auto-compress --create --file ../../${{ env.PREFIX }}-linux-x64.tar.gz --verbose autoexporter
+        working-directory: autoexporter-${{ github.sha }}-ubuntu-22.04-ghc-9.8/artifact
+      - run: tar --auto-compress --create --file ../../${{ env.PREFIX }}-win32-x64.tar.gz --verbose autoexporter.exe
+        working-directory: autoexporter-${{ github.sha }}-windows-2022-ghc-9.8/artifact
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.PREFIX }}*.tar.gz
+      - run: cabal upload --publish --username '${{ secrets.HACKAGE_USERNAME }}' --password '${{ secrets.HACKAGE_PASSWORD }}' ${{ env.PREFIX }}.tar.gz
+name: Workflow
+on:
+  push: null
+  release:
+    types:
+      - created
+  schedule:
+    - cron: 0 0 * * 1
