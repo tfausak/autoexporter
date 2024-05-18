@@ -5,7 +5,7 @@ synopsis: Automatically re-export modules.
 description: Autoexporter automatically re-exports modules.
 build-type: Simple
 category: Utility
-extra-source-files:
+extra-doc-files:
   CHANGELOG.markdown
   README.markdown
 
