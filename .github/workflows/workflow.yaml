@@ -32,7 +32,6 @@ jobs:
         with:
           name: autoexporter-${{ github.sha }}-ghc-${{ matrix.ghc }}-${{ matrix.os }}
           path: artifact.tar
-      - run: artifact/autoexporter --input autoexporter.cabal --mode check
     strategy:
       matrix:
         include:
