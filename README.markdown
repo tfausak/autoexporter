@@ -1,8 +1,7 @@
 # Autoexporter
 
-[![Workflow](https://github.com/tfausak/autoexporter/actions/workflows/workflow.yaml/badge.svg)](https://github.com/tfausak/autoexporter/actions/workflows/workflow.yaml)
-[![Hackage](https://img.shields.io/hackage/v/autoexporter)](https://hackage.haskell.org/package/autoexporter)
-[![Stackage](https://www.stackage.org/package/autoexporter/badge/nightly?label=stackage)](https://www.stackage.org/package/autoexporter)
+[![Workflow](https://github.com/tfausak/autoexporter/actions/workflows/ci.yml/badge.svg)](https://github.com/tfausak/autoexporter/actions/workflows/ci.yml)
+[![Hackage](https://badgen.net/hackage/v/autoexporter)](https://hackage.haskell.org/package/autoexporter)
 
 Autoexporter automatically re-exports Haskell modules.
 

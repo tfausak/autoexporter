@@ -1,8 +1,3 @@
-module Main
-  ( main,
-  )
-where
-
 import qualified Autoexporter
 
 main :: IO ()
