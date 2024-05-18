@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: tfausak/cabal-gild-setup-action@v2
-      - run: cabal-gild --input imp.cabal --mode check
+      - run: cabal-gild --input autoexporter.cabal --mode check
   ormolu:
     name: Ormolu
     runs-on: ubuntu-latest
