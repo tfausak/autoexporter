@@ -1,6 +1,6 @@
 # Autoexporter
 
-[![Workflow](https://github.com/tfausak/autoexporter/actions/workflows/ci.yml/badge.svg)](https://github.com/tfausak/autoexporter/actions/workflows/ci.yml)
+[![CI](https://github.com/tfausak/autoexporter/actions/workflows/ci.yml/badge.svg)](https://github.com/tfausak/autoexporter/actions/workflows/ci.yml)
 [![Hackage](https://badgen.net/hackage/v/autoexporter)](https://hackage.haskell.org/package/autoexporter)
 
 Autoexporter automatically re-exports Haskell modules.
