@@ -19,7 +19,6 @@ source-repository head
 
 flag pedantic
   default: False
-  description: Enables @-Werror@, which turns warnings into errors.
   manual: True
 
 common library
