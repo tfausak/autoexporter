@@ -30,7 +30,7 @@ jobs:
       - run: cp dist-newstyle/autoexporter-*-docs.tar.gz artifact
       - run: cp $( cabal list-bin autoexporter ) artifact
       - run: tar --create --file artifact.tar --verbose artifact
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: autoexporter-${{ github.sha }}-ghc-${{ matrix.ghc }}-${{ matrix.os }}
           path: artifact.tar
