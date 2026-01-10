@@ -1,6 +1,6 @@
 cabal-version: 2.2
 name: autoexporter
-version: 2.0.0.15
+version: 2.0.0.16
 synopsis: Automatically re-export modules.
 description: Autoexporter automatically re-exports modules.
 build-type: Simple
