@@ -45,10 +45,10 @@ autoexporter = do
 
   -- Interpret "--include"d paths as being relative to the module we are
   -- processing.
-  let absoluteIncludePaths = map (resolveIncludePath input) includes
+  let absoluteIncludePaths = fmap (resolveIncludePath input) includes
 
   -- Convert all discovered/"--include"d module paths into module names.
-  let moduleNames = getModuleNames (absoluteIncludePaths ++ entries)
+  let moduleNames = getModuleNames (absoluteIncludePaths <> entries)
 
   -- Finally we render the module and write it to the output file.
   let content = renderModule moduleName moduleNames
@@ -102,8 +102,8 @@ listDirectoryDeep directory = do
 
 -- | Convert a relative path passed via @--include@ into an absolute path.
 resolveIncludePath :: FilePath -> FilePath -> FilePath
-resolveIncludePath inputPath includePath =
-  FilePath.combine (FilePath.takeDirectory inputPath) includePath
+resolveIncludePath inputPath =
+  FilePath.combine (FilePath.takeDirectory inputPath)
 
 -- | Given a list of file paths, returns a sorted list of module names from the
 -- entries that were Haskell files.

@@ -28,6 +28,7 @@ common library
     -Weverything
     -Wno-all-missed-specialisations
     -Wno-implicit-prelude
+    -Wno-inferred-safe-imports
     -Wno-missed-specialisations
     -Wno-missing-deriving-strategies
     -Wno-missing-exported-signatures
@@ -100,6 +101,6 @@ test-suite autoexporter-include-test-suite
   hs-source-dirs: source/test-suites/include
   other-modules:
     NonRootTestTree.AutoexportedSubtree
-    NonRootTestTree.AutoexportedSubtree.ShallowLeaf
     NonRootTestTree.AutoexportedSubtree.DeepLeaves.DeepLeaf1
     NonRootTestTree.AutoexportedSubtree.DeepLeaves.DeepLeaf2
+    NonRootTestTree.AutoexportedSubtree.ShallowLeaf

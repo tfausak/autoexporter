@@ -1,4 +1,5 @@
 {-# LANGUAGE ApplicativeDo #-}
+{-# LANGUAGE Safe #-}
 {-# LANGUAGE TypeApplications #-}
 
 -- | The option parser for the preprocessor.
