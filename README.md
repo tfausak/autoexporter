@@ -64,9 +64,12 @@ things to look out for:
   {-# OPTIONS_GHC -F -pgmF autoexporter -optF --deep #-}
   ```
 
-  Alternatively, you can include specific modules by passing `--include` one or
+- Alternatively, you can include specific modules by passing `--include` one or
   more times:
 
   ```haskell
   {-# OPTIONS_GHC -F -pgmF autoexporter -optF --include -optF M/A/B.hs #-}
   ```
+
+  File paths passed to `--include` should be relative to the module invoking
+  Autoexporter.

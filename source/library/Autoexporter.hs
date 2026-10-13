@@ -42,7 +42,13 @@ autoexporter = do
   -- we simply ignore non-Haskell files and files that don't form valid module
   -- names. Also we sort the module names so that the output is deterministic.
   entries <- listDirectory depth (FilePath.dropExtension input)
-  let moduleNames = getModuleNames (includes ++ entries)
+
+  -- Interpret "--include"d paths as being relative to the module we are
+  -- processing.
+  let absoluteIncludePaths = map (resolveIncludePath input) includes
+
+  -- Convert all discovered/"--include"d module paths into module names.
+  let moduleNames = getModuleNames (absoluteIncludePaths ++ entries)
 
   -- Finally we render the module and write it to the output file.
   let content = renderModule moduleName moduleNames
@@ -93,6 +99,11 @@ listDirectoryDeep directory = do
         isDirectory <- Directory.doesDirectoryExist entry
         if isDirectory then listDirectoryDeep entry else pure [entry]
   fmap concat (mapM listEntry entries)
+
+-- | Convert a relative path passed via @--include@ into an absolute path.
+resolveIncludePath :: FilePath -> FilePath -> FilePath
+resolveIncludePath inputPath includePath =
+  FilePath.combine (FilePath.takeDirectory inputPath) includePath
 
 -- | Given a list of file paths, returns a sorted list of module names from the
 -- entries that were Haskell files.

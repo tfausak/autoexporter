@@ -98,3 +98,8 @@ test-suite autoexporter-include-test-suite
   main-is: Main.hs
   type: exitcode-stdio-1.0
   hs-source-dirs: source/test-suites/include
+  other-modules:
+    NonRootTestTree.AutoexportedSubtree
+    NonRootTestTree.AutoexportedSubtree.ShallowLeaf
+    NonRootTestTree.AutoexportedSubtree.DeepLeaves.DeepLeaf1
+    NonRootTestTree.AutoexportedSubtree.DeepLeaves.DeepLeaf2
