@@ -26,7 +26,8 @@ autoexporter = do
   Options.Options
     { Options._inputPath = input,
       Options._outputPath = output,
-      Options._depth = depth
+      Options._depth = depth,
+      Options._includes = includes
     } <-
     Options.parseOptions
 
@@ -41,7 +42,7 @@ autoexporter = do
   -- we simply ignore non-Haskell files and files that don't form valid module
   -- names. Also we sort the module names so that the output is deterministic.
   entries <- listDirectory depth (FilePath.dropExtension input)
-  let moduleNames = getModuleNames entries
+  let moduleNames = getModuleNames (includes ++ entries)
 
   -- Finally we render the module and write it to the output file.
   let content = renderModule moduleName moduleNames

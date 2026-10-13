@@ -54,7 +54,7 @@ import M.B
 Autoexporter will generally behave as you'd expect, but there are a couple
 things to look out for:
 
-- You cannot selectively include or exclude any modules.
+- You cannot selectively exclude modules.
 
 - By default, only immediate children will be re-exported. If you use this in
   some module `M`, it won't pull in `M.A.B`. If you need deep re-exporting,
@@ -62,4 +62,11 @@ things to look out for:
 
   ```haskell
   {-# OPTIONS_GHC -F -pgmF autoexporter -optF --deep #-}
+  ```
+
+  Alternatively, you can include specific modules by passing `--include` one or
+  more times:
+
+  ```haskell
+  {-# OPTIONS_GHC -F -pgmF autoexporter -optF --include -optF M/A/B.hs #-}
   ```

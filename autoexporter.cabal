@@ -92,3 +92,9 @@ test-suite autoexporter-deep-test-suite
   main-is: Main.hs
   type: exitcode-stdio-1.0
   hs-source-dirs: source/test-suites/deep
+
+test-suite autoexporter-include-test-suite
+  import: test-suite
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs: source/test-suites/include

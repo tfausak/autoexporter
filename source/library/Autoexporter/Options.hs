@@ -17,7 +17,8 @@ import qualified Options.Applicative as Optparse
 data Options = Options
   { _inputPath :: FilePath,
     _outputPath :: FilePath,
-    _depth :: Depth
+    _depth :: Depth,
+    _includes :: [FilePath]
   }
 
 -- | This type describes how to search for modules to export. A shallow search
@@ -40,11 +41,13 @@ optionsParser = do
   -- Applicative do-blocks.
   paths <- positionalArgs
   depth <- Optparse.flag DepthShallow DepthDeep (Optparse.long "deep")
+  includes <- Optparse.many (Optparse.strOption (Optparse.long "include"))
   pure
     Options
       { _inputPath = fst paths,
         _outputPath = snd paths,
-        _depth = depth
+        _depth = depth,
+        _includes = includes
       }
 
 -- | Parse the input and output paths from the positional arguments.
