@@ -68,7 +68,7 @@ things to look out for:
   more times:
 
   ```haskell
-  {-# OPTIONS_GHC -F -pgmF autoexporter -optF --include -optF M/A/B.hs #-}
+  {-# OPTIONS_GHC -F -pgmF autoexporter -optF --include=M/A/B.hs #-}
   ```
 
   File paths passed to `--include` should be relative to the module invoking
