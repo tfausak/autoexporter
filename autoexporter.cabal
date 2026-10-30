@@ -46,6 +46,21 @@ common executable
     -rtsopts
     -threaded
 
+common test-suite
+  import: library
+  build-tool-depends: autoexporter:autoexporter
+  build-depends:
+    tasty ^>=1.5.4,
+    tasty-hunit ^>=0.10.2,
+
+  other-modules:
+    TestTree
+    TestTree.DeepLeaves.DeepLeaf1
+    TestTree.DeepLeaves.DeepLeaf2
+    TestTree.ShallowLeaf
+
+  ghc-options: -Wno-missing-import-lists
+
 library
   import: library
   build-depends:
@@ -61,3 +76,15 @@ executable autoexporter
   import: executable
   hs-source-dirs: source/executable
   main-is: Main.hs
+
+test-suite autoexporter-shallow-test-suite
+  import: test-suite
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs: source/test-suites/shallow
+
+test-suite autoexporter-deep-test-suite
+  import: test-suite
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs: source/test-suites/deep
